@@ -62,12 +62,11 @@ public:
                 temp = temp->next;
             }
             tail = temp;
-            tail->next = nullptr;
             temp = temp->next;
+            tail->next = nullptr;
             length--;
         }
         delete temp;
-
     }
 
     void prepend(int value){

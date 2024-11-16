@@ -147,7 +147,7 @@ if (animal instanceof Dog) {
 2. **Covariant Return Type**:
 
    * Covariant return types are related to **method overriding** in a subclass. They allow the return type of the overridden method to be more specific than the original return type in the superclass.
-   * **Covariant return types** don't involve casting of objects, but they do allow you to return more specific types in subclass methods. This concept can be related to **upcasting** in the sense that the return type of a subclass method can be upcasted to its superclass type (i.e., the return type of `getAnimal()` in `Dog` is `Dog`, but it can be assigned to an `Animal` reference).
+   * **Covariant return types** don't involve casting of objects, but they do allow you to return more specific types in subclass methods. This concept can be related to **upcasting** in the sense that the return type of a subclass method can be upcasted to its superclass type.
 
 ---
 

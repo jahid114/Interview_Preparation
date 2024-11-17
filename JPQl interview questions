@@ -1,0 +1,395 @@
+Basic JPQL Questions
+
+    What is JPQL, and how is it different from SQL?
+        JPQL (Java Persistence Query Language) is an object-oriented query language used with JPA to interact with entity objects instead of database tables. Unlike SQL, it operates on entities and their attributes rather than tables and columns.
+
+    What are the key components of a JPQL query?
+        SELECT: Retrieves entities or specific fields.
+        FROM: Specifies the entity class.
+        WHERE: Filters results.
+        GROUP BY: Groups results.
+        ORDER BY: Sorts results.
+        JOIN: Specifies relationships.
+
+    How do you write a simple JPQL query to fetch all records from an entity?
+
+SELECT e FROM Employee e
+
+What is the difference between JPQL and Criteria API?
+
+    JPQL is a string-based query language, making it easier for simpler queries.
+    Criteria API is a type-safe and programmatic way to build queries, often preferred for dynamic query construction.
+
+What are named queries in JPQL?
+
+    Named queries are pre-defined JPQL queries with a unique name, annotated with @NamedQuery in the entity class.
+
+Example:
+
+@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e")
+
+What is the syntax to define and use a positional parameter in JPQL?
+
+    Positional parameters are identified by ? followed by a number.
+
+SELECT e FROM Employee e WHERE e.salary > ?1
+
+What is the syntax to define and use named parameters in JPQL?
+
+    Named parameters start with a colon (:).
+
+    SELECT e FROM Employee e WHERE e.salary > :minSalary
+
+Intermediate JPQL Questions
+Querying Entities
+
+    How do you fetch specific fields instead of the entire entity in JPQL?
+        Use a constructor expression or scalar projection.
+
+SELECT new com.example.EmployeeDTO(e.name, e.salary) FROM Employee e
+
+What is the difference between INNER JOIN and LEFT JOIN in JPQL?
+
+    INNER JOIN: Fetches matching records in both entities.
+    LEFT JOIN: Fetches all records from the left entity, with nulls for unmatched records in the right entity.
+
+Write a JPQL query to fetch all employees with a specific department name.
+
+SELECT e FROM Employee e JOIN e.department d WHERE d.name = :deptName
+
+How do you perform a bulk update using JPQL?
+
+    JPQL allows UPDATE statements but doesn't return updated entities.
+
+UPDATE Employee e SET e.salary = e.salary * 1.10 WHERE e.department.id = :deptId
+
+How do you delete records using JPQL?
+
+    Use the DELETE statement.
+
+    DELETE FROM Employee e WHERE e.status = 'INACTIVE'
+
+Advanced Filtering
+
+    How do you use LIKE in JPQL for pattern matching?
+
+SELECT e FROM Employee e WHERE e.name LIKE '%John%'
+
+How do you use IN in JPQL to filter using a list of values?
+
+SELECT e FROM Employee e WHERE e.id IN :ids
+
+How do you perform a case-insensitive search in JPQL?
+
+    Use LOWER() or UPPER() functions.
+
+    SELECT e FROM Employee e WHERE LOWER(e.name) = :name
+
+Advanced JPQL Questions
+Joins and Relationships
+
+    What is a fetch join in JPQL? How is it used?
+        A fetch join fetches the related entities eagerly in a single query.
+
+SELECT e FROM Employee e JOIN FETCH e.department
+
+What is the difference between JOIN and JOIN FETCH in JPQL?
+
+    JOIN: Retrieves related data but doesn't load it into memory.
+    JOIN FETCH: Retrieves related data and loads it into memory.
+
+How do you handle collections in JPQL?
+
+    Use MEMBER OF to check if an element exists in a collection.
+
+    SELECT e FROM Employee e WHERE 'Java' MEMBER OF e.skills
+
+Aggregation and Grouping
+
+    Write a JPQL query to calculate the average salary of employees grouped by department.
+
+SELECT d.name, AVG(e.salary) FROM Employee e JOIN e.department d GROUP BY d.name
+
+What is the use of the HAVING clause in JPQL?
+
+    HAVING filters aggregated data after GROUP BY.
+
+SELECT d.name, COUNT(e) FROM Employee e JOIN e.department d GROUP BY d.name HAVING COUNT(e) > 10
+
+Write a JPQL query to find the maximum salary in each department.
+
+    SELECT d.name, MAX(e.salary) FROM Employee e JOIN e.department d GROUP BY d.name
+
+Dynamic Queries
+
+    How do you build dynamic JPQL queries?
+        Use the EntityManager to create and execute queries.
+
+    String query = "SELECT e FROM Employee e WHERE e.department.id = :deptId";
+    Query jpqlQuery = entityManager.createQuery(query);
+    jpqlQuery.setParameter("deptId", 1);
+    List<Employee> results = jpqlQuery.getResultList();
+
+    What is the difference between createQuery() and createNamedQuery() in JPQL?
+        createQuery(): Creates dynamic JPQL queries.
+        createNamedQuery(): Executes predefined named queries.
+
+Advanced Topics
+
+    What is a polymorphic query in JPQL?
+        JPQL supports polymorphism. Queries on a superclass return instances of the subclass.
+
+SELECT p FROM Person p WHERE p.name = :name
+
+What is the TYPE operator in JPQL?
+
+    The TYPE operator filters entities based on their specific type in an inheritance hierarchy.
+
+SELECT p FROM Person p WHERE TYPE(p) = Employee
+
+Explain lazy and eager fetching in JPQL.
+
+    Lazy Fetching: Data is loaded on demand.
+    Eager Fetching: Data is loaded immediately with the query.
+
+How does JPQL handle null values?
+
+    Use IS NULL or IS NOT NULL.
+
+    SELECT e FROM Employee e WHERE e.manager IS NULL
+
+Scenario-Based Questions
+
+    Write a JPQL query to find employees who do not have any projects assigned.
+
+SELECT e FROM Employee e WHERE e.projects IS EMPTY
+
+Write a JPQL query to fetch employees with salaries between a given range.
+
+SELECT e FROM Employee e WHERE e.salary BETWEEN :minSalary AND :maxSalary
+
+How do you handle pagination in JPQL?
+
+    Use setFirstResult and setMaxResults methods.
+
+Query query = entityManager.createQuery("SELECT e FROM Employee e");
+query.setFirstResult(0); // Start index
+query.setMaxResults(10); // Page size
+List<Employee> employees = query.getResultList();
+
+How do you execute native SQL queries in JPA?
+
+    Use the createNativeQuery() method.
+
+    Query query = entityManager.createNativeQuery("SELECT * FROM employees", Employee.class);
+    List<Employee> employees = query.getResultList();
+
+These questions cover a wide range of JPQL concepts, from syntax basics to advanced scenarios, ensuring you are well-prepared for interviews involving JPA and JPQL.
+You said:
+more
+ChatGPT said:
+ChatGPT
+
+Here are additional JPQL interview questions to deepen your understanding and preparation:
+JPQL Advanced and Complex Queries
+Nested Queries and Subqueries
+
+    Does JPQL support subqueries? How are they used?
+        Yes, JPQL supports subqueries, which are used in the WHERE or HAVING clause.
+
+SELECT e FROM Employee e WHERE e.salary > (SELECT AVG(e2.salary) FROM Employee e2)
+
+Write a JPQL query to find employees with salaries higher than the average salary of their department.
+
+    SELECT e FROM Employee e 
+    WHERE e.salary > (
+        SELECT AVG(e2.salary) 
+        FROM Employee e2 
+        WHERE e2.department = e.department
+    )
+
+    How do you use a subquery in the FROM clause in JPQL?
+        JPQL does not directly support subqueries in the FROM clause. You need to rely on database views or native queries for such cases.
+
+Entity Relationships and Fetching
+
+    Write a JPQL query to fetch employees and their managers using joins.
+
+SELECT e.name, m.name FROM Employee e LEFT JOIN e.manager m
+
+What is the difference between JOIN and JOIN FETCH with an example?
+
+    JOIN:
+
+SELECT e FROM Employee e JOIN e.department d
+
+JOIN FETCH:
+
+    SELECT e FROM Employee e JOIN FETCH e.department
+
+    Key Difference: JOIN FETCH loads the related entities eagerly, while JOIN does not.
+
+How do you handle bi-directional relationships in JPQL queries?
+
+    Use the mapped side of the relationship.
+
+    SELECT d FROM Department d JOIN d.employees e WHERE e.salary > :minSalary
+
+Special Operators
+
+    What is the purpose of the EXISTS operator in JPQL?
+        It checks for the existence of a subquery's result.
+
+SELECT d FROM Department d WHERE EXISTS (
+    SELECT e FROM Employee e WHERE e.department = d AND e.salary > 10000
+)
+
+How does the ALL, ANY, and SOME operators work in JPQL?
+
+    ALL: Compares a value against all results of a subquery.
+
+SELECT e FROM Employee e WHERE e.salary > ALL (
+    SELECT e2.salary FROM Employee e2 WHERE e2.department.id = :deptId
+)
+
+ANY/SOME: Compares a value against any result of a subquery.
+
+    SELECT e FROM Employee e WHERE e.salary > ANY (
+        SELECT e2.salary FROM Employee e2 WHERE e2.department.id = :deptId
+    )
+
+How does the NOT operator work in JPQL?
+
+    Negates a condition.
+
+    SELECT e FROM Employee e WHERE NOT e.status = 'INACTIVE'
+
+JPQL Functions
+
+    What are JPQL aggregate functions? Provide examples.
+        COUNT:
+
+SELECT COUNT(e) FROM Employee e WHERE e.status = 'ACTIVE'
+
+SUM:
+
+SELECT SUM(e.salary) FROM Employee e
+
+AVG:
+
+SELECT AVG(e.salary) FROM Employee e
+
+MAX/MIN:
+
+    SELECT MAX(e.salary), MIN(e.salary) FROM Employee e
+
+What are JPQL string functions?
+
+    Examples:
+
+    SELECT e FROM Employee e WHERE LENGTH(e.name) > 5
+    SELECT e FROM Employee e WHERE LOWER(e.name) = 'john'
+    SELECT e FROM Employee e WHERE TRIM(e.status) = 'ACTIVE'
+
+What are JPQL date/time functions?
+
+    Examples:
+
+        SELECT e FROM Employee e WHERE FUNCTION('YEAR', e.joinDate) = :year
+
+JPQL Optimization and Best Practices
+
+    What are the best practices for writing efficient JPQL queries?
+        Avoid fetching unnecessary data (use projections or specific field selection).
+        Use JOIN FETCH carefully to avoid over-fetching.
+        Use indexed parameters for better readability and performance.
+        Use native queries for complex database-specific operations.
+
+    How do you avoid the N+1 problem in JPQL?
+        Use JOIN FETCH to eagerly fetch associated entities in a single query.
+
+    SELECT e FROM Employee e JOIN FETCH e.department
+
+    What is the difference between EntityManager.find() and JPQL SELECT queries?
+        EntityManager.find() retrieves entities by primary key and uses the first-level cache.
+        JPQL SELECT queries can fetch multiple results, with or without caching.
+
+    How can you debug JPQL queries?
+        Enable SQL logging in the persistence provider configuration (e.g., Hibernate logs SQL queries).
+
+Scenario-Based JPQL Questions
+
+    Write a JPQL query to find departments with more than 5 employees.
+
+SELECT d FROM Department d WHERE SIZE(d.employees) > 5
+
+Write a JPQL query to fetch employees who are older than 30 years.
+
+SELECT e FROM Employee e WHERE e.age > 30
+
+Write a JPQL query to find employees with the highest salary in each department.
+
+SELECT e FROM Employee e 
+WHERE e.salary = (
+    SELECT MAX(e2.salary) 
+    FROM Employee e2 
+    WHERE e2.department = e.department
+)
+
+Write a JPQL query to fetch employees without any assigned tasks.
+
+SELECT e FROM Employee e WHERE e.tasks IS EMPTY
+
+How do you handle pagination in JPQL?
+
+Query query = entityManager.createQuery("SELECT e FROM Employee e ORDER BY e.name");
+query.setFirstResult(10); // Offset
+query.setMaxResults(5);  // Limit
+List<Employee> results = query.getResultList();
+
+Write a JPQL query to count employees grouped by department.
+
+    SELECT d.name, COUNT(e) FROM Employee e JOIN e.department d GROUP BY d.name
+
+Advanced and Miscellaneous
+
+    How do you handle polymorphic queries in JPQL?
+        JPQL queries on a superclass automatically include its subclasses.
+
+SELECT p FROM Person p WHERE p.name = 'John'
+
+What is the role of TYPE() in JPQL?
+
+    Filters entities based on their specific subclass in a hierarchy.
+
+SELECT p FROM Person p WHERE TYPE(p) = Manager
+
+Explain how JPQL handles multi-level relationships.
+
+    JPQL supports deep relationships.
+
+SELECT p FROM Project p JOIN p.team.members m WHERE m.name = 'Alice'
+
+How do you execute a JPQL query that involves database-specific functions?
+
+    Use the FUNCTION() method.
+
+SELECT e FROM Employee e WHERE FUNCTION('MONTH', e.joinDate) = :month
+
+Can you update multiple entities in JPQL?
+
+    Yes, but all entities must satisfy the same WHERE condition.
+
+UPDATE Employee e SET e.status = 'ACTIVE' WHERE e.department.id = :deptId
+
+How do you ensure database-specific behavior in JPQL queries?
+
+    Use native queries when JPQL cannot provide a feature.
+
+Query query = entityManager.createNativeQuery("SELECT * FROM employees WHERE ...", Employee.class);
+
+What are common pitfalls in JPQL?
+
+    Failing to properly map relationships in entities.
+    Ignoring the performance impact of eager fetching.
+    Writing queries without considering the N+1 problem.
